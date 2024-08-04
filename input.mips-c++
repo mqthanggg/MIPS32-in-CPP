@@ -1,0 +1,3 @@
+ORI $t0, $zero, 10
+ORI $t1, $zero, 9
+ADD $t2, $t0, $t1
