@@ -1,6 +1,4 @@
-#include <stdio.h>
 #include <cstring>
-#include <algorithm>
 #include "../headers/compiler.h"
 
 using namespace std;
@@ -8,19 +6,6 @@ using namespace std;
 //Read file with name + args
 //mips-c++.exe -F [FILENAME] -O [FILENAME]
 //mips-c++.exe -F [FILENAME]
-
-//TODO
-/*
-- Terminal output
-- Finish PROCESS_ARGUMENTS: add more else if conditions
-- Labels
-- Finish compile: add more else if conditions
-- Make use of WRITE_REG
-- Finish ADD_DATA
-- Instructions
-- data??, global??
-...
-*/
 
 int main(int argc, const char** argv) {
 

@@ -40,29 +40,29 @@ static std::vector<std::string> REGISTERS_NAME = {
 
 struct Register{
 
-    bool          RESERVED;
-    bool          SIGN = 0;
-    std::string*  ADDR; //By default each register has 4 bytes = 32 bits
-    short         BYTES = 4;
+    bool                      RESERVED;
+    bool                      SIGN = 0;
+    std::vector<std::string>  ADDR; //By default each register has 4 bytes = 32 bits
+    short                     BYTES = 4;
     Register(bool RESERVED, const std::string& byte1,const std::string& byte2,const std::string& byte3,const std::string& byte4): 
         RESERVED(RESERVED)
     {
-        ADDR = new std::string[4];
-        ADDR[0] = byte1;
-        ADDR[1] = byte2;
-        ADDR[2] = byte3;
-        ADDR[3] = byte4;
+        
+        ADDR.push_back(byte1);
+        ADDR.push_back(byte2);
+        ADDR.push_back(byte3);
+        ADDR.push_back(byte4);
 
     }
     Register(const size_t& SPACE_SIZE){
         BYTES = SPACE_SIZE;
-        ADDR = new std::string[BYTES];
+        ADDR.resize(BYTES);
     }
     Register() :
         RESERVED(true),
         SIGN(0)
     {
-        ADDR = new std::string[BYTES];
+        ADDR.resize(BYTES);
         ADDR[3] = ADDR[2] = ADDR[1] = ADDR[0] = "00000000";
     }
 };
@@ -117,8 +117,6 @@ static Register LO         = Register(true, "00000000", "00000000", "00000000", 
 void WRITE_REG(const std::string& REG, ...);
 
 Register& LOAD_REG(const std::string& REG);
-
-static std::map<int, Register>        INT_REG;
 
 static std::map<std::string,Register> STR_REG;
 

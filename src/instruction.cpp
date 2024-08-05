@@ -4,7 +4,7 @@
 // #include <iostream>
 
 void REG_READ_ADDR(const Register& REG){
-    printf("Value: %s", REG.ADDR[0].c_str());
+    printf("Value: %c %s", REG.SIGN == 0 ? '+' : '-', REG.ADDR[0].c_str());
     for (short i = 1; i < REG.BYTES; i++) {
         printf("|%s",REG.ADDR[i].c_str());
     }
@@ -162,8 +162,10 @@ void SUB(Register& DES_REG, const Register& ARG1, const Register& ARG2){
     for (short i = 3; i >= 0; i--)
         DES_REG.ADDR[i] = BITS_SUB(OVERFLOW, ARG1.ADDR[i], ARG2.ADDR[i]);
 
-    if (OVERFLOW)
+    if (OVERFLOW){
         printf("Warning!: Overflow detected when SUB.\n");
+        DES_REG.SIGN = 1;    
+    }
     
     REG_READ_ADDR(DES_REG);
     return;

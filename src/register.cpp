@@ -1,39 +1,6 @@
 #include "../headers/register.h"
 
 void REGS_INIT(){
-    INT_REG[0] = ZERO_REG;
-    INT_REG[1] = AT_REG;
-    INT_REG[2] = V_REGS[0];
-    INT_REG[3] = V_REGS[1];
-    INT_REG[4] = A_REGS[0];
-    INT_REG[5] = A_REGS[1];
-    INT_REG[6] = A_REGS[2];
-    INT_REG[7] = A_REGS[3];
-    INT_REG[8] = T_REGS[0];
-    INT_REG[9] = T_REGS[1];
-    INT_REG[10] = T_REGS[2];
-    INT_REG[11] = T_REGS[3];
-    INT_REG[12] = T_REGS[4];
-    INT_REG[13] = T_REGS[5];
-    INT_REG[14] = T_REGS[6];
-    INT_REG[15] = T_REGS[7];
-    INT_REG[16] = S_REGS[0];
-    INT_REG[17] = S_REGS[1];
-    INT_REG[18] = S_REGS[2];
-    INT_REG[19] = S_REGS[3];
-    INT_REG[20] = S_REGS[4];
-    INT_REG[21] = S_REGS[5];
-    INT_REG[22] = S_REGS[6];
-    INT_REG[23] = S_REGS[7];
-    INT_REG[24] = T_REGS[8];
-    INT_REG[25] = T_REGS[9];
-    INT_REG[26] = K_REGS[0];
-    INT_REG[27] = K_REGS[1];
-    INT_REG[28] = GP_REG;
-    INT_REG[29] = SP_REG;
-    INT_REG[30] = FP_REG;
-    INT_REG[31] = RA_REG;
-
     STR_REG["$zero"] = ZERO_REG;
     STR_REG["$at"] = AT_REG;
     STR_REG["$v0"] = V_REGS[0];

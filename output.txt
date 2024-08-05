@@ -1,0 +1,16 @@
+Reading content of input file...
+Line #0: Instruction: ORI Args: $t0, $zero, 10
+Argument: $t0
+Argument: $zero
+Argument: 10
+Performing ori instruction: $t0 = $zero + 10 here
+Line #1: Instruction: ORI Args: $t1, $zero, 9
+Argument: $t1
+Argument: $zero
+Argument: 9
+Performing ori instruction: $t1 = $zero + 9 here
+Line #2: Instruction: ADD Args: $t2, $t0, $t1
+Argument: $t2
+Argument: $t0
+Argument: $t1
+Performing add instruction: $t2 = $t0 + $t1 here

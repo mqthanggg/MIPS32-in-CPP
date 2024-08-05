@@ -1,6 +1,10 @@
 #pragma once
 #include <iostream>
 #include <fstream>
+#include <algorithm>
+#include <sstream>
+#include "../headers/instruction.h"
+#include "../headers/register.h"
 
 using namespace std;
 
