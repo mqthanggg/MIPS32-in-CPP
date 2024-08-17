@@ -50,7 +50,7 @@ int MEM_INIT(){
     MEM_PTR = memset(
 
         MEM_PTR, 
-        0, 
+        '\0', 
         User::HEAP.CEIL_LIM - User::TEXT.FLOOR_LIM + 1
 
     );
@@ -74,6 +74,12 @@ int MEM_UNMAP(){
     SYS_PRINT("Error unmapping memory!\n");
     return -1;
 
+}
+
+string* GET_MEM(const string& REG, const int& OFFSET){
+    unsigned char* base_addr = MEM_PTR[User::REGS_MEM_ADDR[REG] + OFFSET];
+    string* OUT_ADDR = new string[4];
+    //READ BITS BY BITS
 }
 
 int main(){

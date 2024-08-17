@@ -47,5 +47,5 @@ static void* MEM_PTR;
 int MEM_INIT();
 int MEM_UNMAP();
 void WRITE_MEM(const string& REG, const string& ADDR);
-string* GET_MEM(const string& REG, const int& IMMEDIATE);
-void MEM_ALLOC(const string& REG, const int& IMMEDIATE);
+string* GET_MEM(const string& REG, const int& OFFSET);
+void MEM_ALLOC(const string& REG, const int& OFFSET);
