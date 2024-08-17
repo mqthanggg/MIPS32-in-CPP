@@ -2,9 +2,31 @@
 
 #define EXIT_FAILED() {input_file.close(); output_file.close(); return -1;}
 
-string   _COMPILER_OUTPUT_FILE_NAME;
-ifstream input_file;
-ofstream output_file;
+int IMMEDIATE_CHECK(const string& IMMEDIATE_STR){
+
+    long long IMMEDIATE = 0;
+
+    try {
+        
+        if (IMMEDIATE_STR.substr(0,2) == "0x") IMMEDIATE = stoll(IMMEDIATE_STR, 0, 16);
+        else IMMEDIATE = stoll(IMMEDIATE_STR);
+
+    } catch (exception&) {
+
+        SYS_PRINT("Invalid number for immediate value!\n");
+        return -1;
+
+    }
+
+    if (IMMEDIATE > 0xFFFFFFFF || IMMEDIATE < 0){
+
+        SYS_PRINT("Immediate value out of range!\n");
+        return -1;
+
+    }
+
+    return 1;
+}
 
 void SYS_PRINT(const char* format, ...){
     va_list arg;
@@ -20,7 +42,7 @@ void SYS_PRINT(const char* format, ...){
 
     }
     else        
-        fprintf(stdout, format, arg);
+        vfprintf(stdout, format, arg);
 
     va_end(arg);
 }
@@ -88,28 +110,35 @@ int PROCESS_ARGUMENTS(string& INSTRUCTION, vector<string>&ARGS, const string& AR
             }
         }
 
-        long long IMMEDIATE = 0;
+        if (IMMEDIATE_CHECK(ARGS[2]) == -1) return -1;
+    }
+    //0 = DES_REG
+    //1 = IMMEDIATE
+    //2 = ARG_REG
+    else if(find(LOAD_STORE_INSTRUCTIONS.begin(), LOAD_STORE_INSTRUCTIONS.end(), INSTRUCTION) != LOAD_STORE_INSTRUCTIONS.end()){
 
-        try {
+        if (find(REGISTERS_NAME.begin(), REGISTERS_NAME.end(), ARGS[0]) == REGISTERS_NAME.end()){
 
-            IMMEDIATE = stoll(ARGS[2]);
-
-        } catch (exception&) {
-
-            SYS_PRINT("Invalid number for immediate value!\n");
+            SYS_PRINT("Invalid register name at %s!\n", ARGS[0].c_str());
             return -1;
 
         }
 
-        if (IMMEDIATE > 0xFFFFFFFF || IMMEDIATE < 0){
+        char buff1[50];
+        char buff2[50];
 
-            SYS_PRINT("Immediate value out of range!\n");
-            return -1;
+        if (sscanf(ARGS[1].c_str(), "%[^(](%[^)])", &buff1, &buff2) < 0) return -1;
 
-        }
+        string IMMEDIATE_STR = buff1;
+        string REG = buff2;
+
+        if (IMMEDIATE_CHECK(IMMEDIATE_STR) == -1) return -1;
+
+        ARGS[1] = stoi(IMMEDIATE_STR);
+        ARGS[2] = REG;
+        
     }
 
-    //More
     else{
 
         SYS_PRINT("Invalid instruction at %s.\n",INSTRUCTION.c_str());
@@ -119,8 +148,7 @@ int PROCESS_ARGUMENTS(string& INSTRUCTION, vector<string>&ARGS, const string& AR
     return 0;
 }
 
-int compile(const string &INPUT_FILE_NAME, const string &OUTPUT_FILE_NAME){
-             _COMPILER_OUTPUT_FILE_NAME = OUTPUT_FILE_NAME;
+int compile(const string &INPUT_FILE_NAME){
     string   fstr                       = "";
     int      line                       = 0;
              input_file.open(INPUT_FILE_NAME,ios::in);
@@ -133,7 +161,7 @@ int compile(const string &INPUT_FILE_NAME, const string &OUTPUT_FILE_NAME){
 
     }
 
-    //Output to terminal
+    //Output to file
     if (_COMPILER_OUTPUT_FILE_NAME != "DEFAULT_TERMINAL_OUTPUT"){
 
         output_file.open(_COMPILER_OUTPUT_FILE_NAME,ios::in);
@@ -184,20 +212,67 @@ int compile(const string &INPUT_FILE_NAME, const string &OUTPUT_FILE_NAME){
         if (INSTRUCTION == "add"){
 
             SYS_PRINT("Performing add instruction: %s = %s + %s here\n", ARGS[0].c_str(), ARGS[1].c_str(), ARGS[2].c_str());
-            ADD(LOAD_REG(ARGS[0]), LOAD_REG(ARGS[1]), LOAD_REG(ARGS[2]));
+
+            Register* DES_REG  = LOAD_REG(ARGS[0]);
+            Register* ARG1_REG = LOAD_REG(ARGS[1]);
+            Register* ARG2_REG = LOAD_REG(ARGS[2]);
+
+            if (*DES_REG  == ERROR_REG ||
+                *ARG1_REG == ERROR_REG ||
+                *ARG2_REG == ERROR_REG)
+                EXIT_FAILED();
+
+            ADD(*DES_REG, *ARG1_REG, *ARG2_REG);
 
         }
         else if(INSTRUCTION == "sub"){
-
+            
             SYS_PRINT("Performing sub instruction: %s = %s + %s here\n", ARGS[0].c_str(), ARGS[1].c_str(), ARGS[2].c_str());
-            SUB(LOAD_REG(ARGS[0]), LOAD_REG(ARGS[1]), LOAD_REG(ARGS[2]));
+
+            Register* DES_REG  = LOAD_REG(ARGS[0]);
+            Register* ARG1_REG = LOAD_REG(ARGS[1]);
+            Register* ARG2_REG = LOAD_REG(ARGS[2]);
+
+            if (*DES_REG  == ERROR_REG ||
+                *ARG1_REG == ERROR_REG ||
+                *ARG2_REG == ERROR_REG)
+                EXIT_FAILED();
+
+            SUB(*DES_REG, *ARG1_REG, *ARG2_REG);
 
         }
         else if(INSTRUCTION == "ori"){
 
             SYS_PRINT("Performing ori instruction: %s = %s + %s here\n", ARGS[0].c_str(), ARGS[1].c_str(), ARGS[2].c_str());
-            ORI(LOAD_REG(ARGS[0]), LOAD_REG(ARGS[1]), stoi(ARGS[2]));
 
+            Register* DES_REG  = LOAD_REG(ARGS[0]);
+            Register* ARG_REG = LOAD_REG(ARGS[1]);
+
+            if (*DES_REG  == ERROR_REG ||
+                *ARG_REG == ERROR_REG)
+                EXIT_FAILED();
+
+            ORI(*DES_REG, *ARG_REG, stoll(ARGS[2]));
+
+        }
+        else if(INSTRUCTION == "lw"){
+            
+            unsigned int IMMEDIATE = stoll(ARGS[1]);
+            SYS_PRINT("Performing lw instruction: *%s = %d[%d] here\n", ARGS[0].c_str(), IMMEDIATE, ARGS[2].c_str());
+            if (IMMEDIATE % 4 != 0) {
+                SYS_PRINT("Invalid offset for lw!\n");
+                EXIT_FAILED();
+            }
+
+        }
+        else if(INSTRUCTION == "sw"){
+
+            unsigned int IMMEDIATE = stoll(ARGS[1]);
+            SYS_PRINT("Performing sw instruction: %d[%d] = *%s here\n", stoll(ARGS[1]), ARGS[2].c_str(), ARGS[0].c_str());
+            if (IMMEDIATE % 4 != 0) {
+                SYS_PRINT("Invalid offset for lw!\n");
+                EXIT_FAILED();
+            }
         }
         else{
  
@@ -208,6 +283,8 @@ int compile(const string &INPUT_FILE_NAME, const string &OUTPUT_FILE_NAME){
 
     }
     input_file.close();
+    MEM_UNMAP();
+
     if (_COMPILER_OUTPUT_FILE_NAME != "DEFAULT_TERMINAL_OUTPUT") output_file.close();
 
     return 0;

@@ -2,7 +2,7 @@
 #include "register.h"
 
 //$1, $2, $3
-static std::vector<std::string> _3_REGS_INSTRUCTIONS{
+static vector<string> _3_REGS_INSTRUCTIONS{
     "add",
     "addu",
     "and",
@@ -19,7 +19,7 @@ static std::vector<std::string> _3_REGS_INSTRUCTIONS{
 };
 
 //$1, $2
-static std::vector<std::string> _2_REGS_INSTRUCTIONS{
+static vector<string> _2_REGS_INSTRUCTIONS{
     "div",
     "divu",
     "mult",
@@ -27,7 +27,7 @@ static std::vector<std::string> _2_REGS_INSTRUCTIONS{
 };
 
 //$1, $2, i
-static std::vector<std::string> _2_REGS_I_INSTRUCTIONS{
+static vector<string> _2_REGS_I_INSTRUCTIONS{
     "addi",
     "addiu",
     "andi",
@@ -38,14 +38,14 @@ static std::vector<std::string> _2_REGS_I_INSTRUCTIONS{
 };
 
 //$1, $2, a
-static std::vector<std::string> _2_REGS_A_INSTRUCTIONS{
+static vector<string> _2_REGS_A_INSTRUCTIONS{
     "sll",
     "sra",
     "srl",
 };
 
 //$1, i($2)
-static std::vector<std::string> LOAD_STORE_INSTRUCTIONS{
+static vector<string> LOAD_STORE_INSTRUCTIONS{
     "lb",
     "lbu",
     "lh",
@@ -57,7 +57,7 @@ static std::vector<std::string> LOAD_STORE_INSTRUCTIONS{
 };
 
 //$1
-static std::vector<std::string> MOVE_INSTRUCTIONS{
+static vector<string> MOVE_INSTRUCTIONS{
     "mfhi",
     "mflo",
     "mthi",
@@ -67,4 +67,6 @@ static std::vector<std::string> MOVE_INSTRUCTIONS{
 //ADD, SUB
 void ADD(Register& DES_REG, const Register& ARG1, const Register& ARG2);
 void SUB(Register& DES_REG, const Register& ARG1, const Register& ARG2);
-void ORI(Register& DES_REG, const Register& ARG1, const int& IMMEDIATE);
+void ORI(Register& DES_REG, const Register& ARG, const int& IMMEDIATE);
+void LW(Register& DES_REG, const Register& ARG, const int& IMMEDIATE);
+void SW(Register& DES_REG, const Register& ARG, const int& IMMEDIATE);

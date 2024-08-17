@@ -1,9 +1,8 @@
 #pragma once
-#include <map>
-#include <string>
+#include "global.h"
 
-static std::map<std::string, unsigned int> LABELS_LINE;
+static map<string, unsigned int> LABELS_LINE;
 
-void ADD_LABEL(const std::string& LABEL, unsigned int LINE);
+void ADD_LABEL(const string& LABEL, unsigned int LINE);
 
-inline unsigned int GET_LABEL(const std::string& LABEL);
+inline unsigned int GET_LABEL(const string& LABEL);

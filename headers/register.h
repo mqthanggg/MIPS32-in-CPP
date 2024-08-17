@@ -1,12 +1,8 @@
 #pragma once
 #define BYTE 8
-#include <stdarg.h>
-#include <stdio.h>
-#include <string>
-#include <map>
-#include <vector>
+#include "global.h"
 
-static std::vector<std::string> REGISTERS_NAME = {
+static vector<string> REGISTERS_NAME = {
     "$zero",
     "$v0",
     "$v1",
@@ -42,16 +38,17 @@ struct Register{
 
     bool                      RESERVED;
     bool                      SIGN = 0;
-    std::vector<std::string>  ADDR; //By default each register has 4 bytes = 32 bits
+    vector<string>  ADDR; //By default each register has 4 bytes = 32 bits
     short                     BYTES = 4;
-    Register(bool RESERVED, const std::string& byte1,const std::string& byte2,const std::string& byte3,const std::string& byte4): 
+    Register(bool RESERVED, const string& byte1,const string& byte2,const string& byte3,const string& byte4): 
         RESERVED(RESERVED)
     {
         
-        ADDR.push_back(byte1);
-        ADDR.push_back(byte2);
-        ADDR.push_back(byte3);
-        ADDR.push_back(byte4);
+        ADDR.resize(4);
+        ADDR[0] = byte1;
+        ADDR[1] = byte2;
+        ADDR[2] = byte3;
+        ADDR[3] = byte4;
 
     }
     Register(const size_t& SPACE_SIZE){
@@ -65,9 +62,25 @@ struct Register{
         ADDR.resize(BYTES);
         ADDR[3] = ADDR[2] = ADDR[1] = ADDR[0] = "00000000";
     }
+    bool operator==(Register& REG){
+
+        if (
+            !(
+                this->RESERVED == REG.RESERVED &&
+                this->SIGN     == REG.SIGN &&
+                this->BYTES    == REG.BYTES)
+            )
+            return false;
+
+        for (short byte = 0; byte < this->BYTES; byte++) 
+            if (this->ADDR[byte] != REG.ADDR[byte]) return false;
+
+        return true;
+
+    }
 };
 
-static Register ERROR_REG  = Register(false, "11111111", "11111111", "11111111", "11111111");
+static Register ERROR_REG  = Register(true, "11111111", "11111111", "11111111", "11111111");
 static Register ZERO_REG   = Register(false, "00000000", "00000000", "00000000", "00000000");
 static Register AT_REG     = Register(true, "00000000", "00000000", "00000000", "00000000");
 
@@ -114,14 +127,14 @@ static Register RA_REG     = Register(false, "00000000", "00000000", "00000000",
 static Register HI         = Register(true, "00000000", "00000000", "00000000", "00000000");
 static Register LO         = Register(true, "00000000", "00000000", "00000000", "00000000");
 
-void WRITE_REG(const std::string& REG, ...);
+void WRITE_REG(const string& REG, ...);
 
-Register& LOAD_REG(const std::string& REG);
+Register* LOAD_REG(const string& REG);
 
-static std::map<std::string,Register> STR_REG;
+static map<string, Register*> STR_REG;
 
-static std::map<std::string,Register> DATA_REG;
+static map<string, Register*> DATA_REG;
 
-void ADD_DATA(const std::string& VARIABLE, const std::string& TYPE, const std::string& VALUE);
+void ADD_DATA(const string& VARIABLE, const string& TYPE, const string& VALUE);
 
 void REGS_INIT();

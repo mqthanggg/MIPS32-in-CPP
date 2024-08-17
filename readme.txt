@@ -1,5 +1,10 @@
 MIPS32 in C++
-- Terminal output (change the rest)
+- Allocate memory (large bits)
+- lw, sw
+- arrays functions
+- Modules can use SYS_PRINT OK
+- Handle errors between modules
+- Terminal output (change the rest) OK
 - Finish PROCESS_ARGUMENTS: add more else if conditions
 - Labels
 - Finish compile: add more else if conditions

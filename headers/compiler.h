@@ -1,11 +1,10 @@
 #pragma once
-#include <iostream>
-#include <fstream>
-#include <algorithm>
-#include <sstream>
-#include "../headers/instruction.h"
-#include "../headers/register.h"
+#include "global.h"
+#include "instruction.h"
+#include "register.h"
+#include "mem.h"
 
-using namespace std;
+static ifstream input_file;
+static ofstream output_file;
 
-int compile(const string& INPUT_FILE_NAME, const string& OUTPUT_FILE_NAME);
+int compile(const string& INPUT_FILE_NAME);

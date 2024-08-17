@@ -4,16 +4,16 @@
 // #include <iostream>
 
 void REG_READ_ADDR(const Register& REG){
-    printf("Value: %c %s", REG.SIGN == 0 ? '+' : '-', REG.ADDR[0].c_str());
+    SYS_PRINT("Value: %c %s", REG.SIGN == 0 ? '+' : '-', REG.ADDR[0].c_str());
     for (short i = 1; i < REG.BYTES; i++) {
-        printf("|%s",REG.ADDR[i].c_str());
+        SYS_PRINT("|%s",REG.ADDR[i].c_str());
     }
-    printf("\n");
+    SYS_PRINT("\n");
     return;
 }
 
-std::string* NUM_TO_BYTE(const int& NUM){
-    std::string* ADDR = new std::string[4];
+string* NUM_TO_BYTE(const int& NUM){
+    string* ADDR = new string[4];
     ADDR[3] = ADDR[2] = ADDR[1] = ADDR[0] = "00000000";
     for (short i = 31, byte = 0, bit = 0; i >= 0; i--) {
         int k = NUM >> i;
@@ -28,8 +28,8 @@ std::string* NUM_TO_BYTE(const int& NUM){
     return ADDR;
 }
 
-std::string BITS_OR(const std::string& byte1, const std::string& byte2){
-    std::string BITS_RESULT = "00000000";
+string BITS_OR(const string& byte1, const string& byte2){
+    string BITS_RESULT = "00000000";
     for (short i = 7; i >= 0; i--) {
         if (byte1[i] == ZERO && byte2[i] == ZERO) BITS_RESULT[i] = ZERO;
         else BITS_RESULT[i] = ONE;
@@ -37,9 +37,9 @@ std::string BITS_OR(const std::string& byte1, const std::string& byte2){
     return BITS_RESULT;
 }
 
-std::string BITS_SUB(bool& OVERFLOW, const std::string& byte1, const std::string& byte2){
+string BITS_SUB(bool& OVERFLOW, const string& byte1, const string& byte2){
     bool        borrow       = OVERFLOW;
-    std::string BITS_RESULT = "00000000";
+    string BITS_RESULT = "00000000";
     for (short i = 7; i >= 0; i--){
         if (borrow) {
 
@@ -89,9 +89,9 @@ std::string BITS_SUB(bool& OVERFLOW, const std::string& byte1, const std::string
     return BITS_RESULT;
 }
 
-std::string BITS_ADD(bool& OVERFLOW, const std::string& byte1, const std::string& byte2){
+string BITS_ADD(bool& OVERFLOW, const string& byte1, const string& byte2){
     bool        carry       = OVERFLOW;
-    std::string BITS_RESULT = "00000000";
+    string BITS_RESULT = "00000000";
     for (short i = 7; i >= 0; i--) {
         if (carry) {
 
@@ -150,7 +150,7 @@ void ADD(Register& DES_REG, const Register& ARG1, const Register& ARG2){
         DES_REG.ADDR[i] = BITS_ADD(OVERFLOW, ARG1.ADDR[i], ARG2.ADDR[i]);
 
     if (OVERFLOW) 
-        printf("Warning!: Overflow detected when ADD.\n");
+        SYS_PRINT("Warning!: Overflow detected when ADD.\n");
 
     REG_READ_ADDR(DES_REG);
     return;
@@ -163,7 +163,7 @@ void SUB(Register& DES_REG, const Register& ARG1, const Register& ARG2){
         DES_REG.ADDR[i] = BITS_SUB(OVERFLOW, ARG1.ADDR[i], ARG2.ADDR[i]);
 
     if (OVERFLOW){
-        printf("Warning!: Overflow detected when SUB.\n");
+        SYS_PRINT("Warning!: Overflow detected when SUB.\n");
         DES_REG.SIGN = 1;    
     }
     
@@ -172,7 +172,7 @@ void SUB(Register& DES_REG, const Register& ARG1, const Register& ARG2){
 }
 
 void ORI(Register &DES_REG, const Register &ARG1, const int& IMMEDIATE){
-    std::string* IMMEDIATE_ADDR = NUM_TO_BYTE(IMMEDIATE);
+    string* IMMEDIATE_ADDR = NUM_TO_BYTE(IMMEDIATE);
 
     for (short i = 0; i < 4; i++)
         DES_REG.ADDR[i] = BITS_OR(ARG1.ADDR[i], IMMEDIATE_ADDR[i]);
@@ -184,12 +184,12 @@ void ORI(Register &DES_REG, const Register &ARG1, const int& IMMEDIATE){
 // int main(){
 //     int num = 0;
 //     while(true) {
-//         std::cout << "Num: ";
-//         std::cin >> num;
+//         cout << "Num: ";
+//         cin >> num;
 //         if (num == -1) break;
-//         std::string* test = NUM_TO_BYTE(num);
+//         string* test = NUM_TO_BYTE(num);
 //         for (short i = 0; i < 4; i++) {
-//             printf("Byte #%d: %s\n", i, test[i].c_str());
+//             SYS_PRINT("Byte #%d: %s\n", i, test[i].c_str());
 //         }
 //         delete [] test;
 //     }
