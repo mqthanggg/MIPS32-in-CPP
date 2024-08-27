@@ -2,6 +2,7 @@
 
 void REGS_INIT(){
     STR_REG["$zero"] = &ZERO_REG;
+    STR_REG["$r0"] = &ZERO_REG;
     STR_REG["$at"] = &AT_REG;
     STR_REG["$v0"] = &V_REGS[0];
     STR_REG["$v1"] = &V_REGS[1];
@@ -38,11 +39,7 @@ void REGS_INIT(){
 //Make sure to adjust this api call for arrays
 void WRITE_REG(const string& REG,...){
 
-    va_list valist;
-    va_start(valist, 4);
-    for (size_t i = 0; i < 4; i++)
-        STR_REG[REG]->ADDR[i] = va_arg(valist, unsigned int);
-    va_end(valist);
+    
 
 }
 
@@ -50,7 +47,7 @@ Register* LOAD_REG(const string& REG){
 
     if (STR_REG.find(REG) == STR_REG.end()) {
         SYS_PRINT("Cannot find this register!\n");
-        return &ERROR_REG;
+        return nullptr;
     }
     return STR_REG[REG];
 

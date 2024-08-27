@@ -1,6 +1,8 @@
 MIPS32 in C++
+- Implement heap memory
 - Allocate memory (large bits)
-- lw, sw
+- Rewrite instructions module, register module
+- lw, sw, pc
 - arrays functions
 - Modules can use SYS_PRINT OK
 - Handle errors between modules

@@ -36,96 +36,70 @@ static vector<string> REGISTERS_NAME = {
 
 struct Register{
 
-    bool                      RESERVED;
-    bool                      SIGN = 0;
-    vector<string>  ADDR; //By default each register has 4 bytes = 32 bits
-    short                     BYTES = 4;
-    Register(bool RESERVED, const string& byte1,const string& byte2,const string& byte3,const string& byte4): 
-        RESERVED(RESERVED)
-    {
-        
-        ADDR.resize(4);
-        ADDR[0] = byte1;
-        ADDR[1] = byte2;
-        ADDR[2] = byte3;
-        ADDR[3] = byte4;
+    bool                      RESERVED     ;
+    bool                      SIGN     = 0 ;
+    short                     BYTES    = 4 ;
+    string                    REG_NAME = "";
+    Register(bool RESERVED, const string& REG_NAME): 
+        RESERVED(RESERVED),
+        REG_NAME(REG_NAME)
+    {}
 
-    }
     Register(const size_t& SPACE_SIZE){
         BYTES = SPACE_SIZE;
-        ADDR.resize(BYTES);
     }
+
     Register() :
         RESERVED(true),
         SIGN(0)
-    {
-        ADDR.resize(BYTES);
-        ADDR[3] = ADDR[2] = ADDR[1] = ADDR[0] = "00000000";
-    }
-    bool operator==(Register& REG){
-
-        if (
-            !(
-                this->RESERVED == REG.RESERVED &&
-                this->SIGN     == REG.SIGN &&
-                this->BYTES    == REG.BYTES)
-            )
-            return false;
-
-        for (short byte = 0; byte < this->BYTES; byte++) 
-            if (this->ADDR[byte] != REG.ADDR[byte]) return false;
-
-        return true;
-
-    }
+    {}
 };
 
-static Register ERROR_REG  = Register(true, "11111111", "11111111", "11111111", "11111111");
-static Register ZERO_REG   = Register(false, "00000000", "00000000", "00000000", "00000000");
-static Register AT_REG     = Register(true, "00000000", "00000000", "00000000", "00000000");
+static Register ZERO_REG   = Register(false, "$zero");
+static Register AT_REG     = Register(true, "$at");
 
 static Register V_REGS[2]  = {
-                         Register(false, "00000000", "00000000", "00000000", "00000000"), 
-                         Register(false, "00000000", "00000000", "00000000", "00000000")
+                         Register(false, "$v0"), 
+                         Register(false, "$v1")
 };
 static Register A_REGS[4]  = {
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000")
+                         Register(false, "$a0"),
+                         Register(false, "$a1"),
+                         Register(false, "$a2"),
+                         Register(false, "$a3")
 };
 static Register T_REGS[10] = {
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
+                         Register(false, "$t0"),
+                         Register(false, "$t1"),
+                         Register(false, "$t2"),
+                         Register(false, "$t3"),
+                         Register(false, "$t4"),
+                         Register(false, "$t5"),
+                         Register(false, "$t6"),
+                         Register(false, "$t7"),
+                         Register(false, "$t8"),
+                         Register(false, "$t9"),
 };
 static Register S_REGS[8]  = {
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
-                         Register(false, "00000000", "00000000", "00000000", "00000000"),
+                         Register(false, "$s0"),
+                         Register(false, "$s1"),
+                         Register(false, "$s2"),
+                         Register(false, "$s3"),
+                         Register(false, "$s4"),
+                         Register(false, "$s5"),
+                         Register(false, "$s6"),
+                         Register(false, "$s7"),
 };
 static Register K_REGS[2]  = {
-                         Register(true, "00000000", "00000000", "00000000", "00000000"),
-                         Register(true, "00000000", "00000000", "00000000", "00000000"),
+                         Register(true, "$k0"),
+                         Register(true, "$k1"),
 };
-static Register GP_REG     = Register(false, "00000000", "00000000", "00000000", "00000000");
-static Register SP_REG     = Register(false, "00000000", "00000000", "00000000", "00000000");
-static Register FP_REG     = Register(false, "00000000", "00000000", "00000000", "00000000");
-static Register RA_REG     = Register(false, "00000000", "00000000", "00000000", "00000000");
-static Register HI         = Register(true, "00000000", "00000000", "00000000", "00000000");
-static Register LO         = Register(true, "00000000", "00000000", "00000000", "00000000");
+static Register GP_REG     = Register(false, "$gp");
+static Register SP_REG     = Register(false, "$sp");
+static Register FP_REG     = Register(false, "$fp");
+static Register RA_REG     = Register(false, "$ra");
+static Register HI         = Register(true, "hi");
+static Register LO         = Register(true, "lo");
 
 void WRITE_REG(const string& REG, ...);
 

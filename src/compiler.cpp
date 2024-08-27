@@ -18,7 +18,7 @@ int IMMEDIATE_CHECK(const string& IMMEDIATE_STR){
 
     }
 
-    if (IMMEDIATE > 0xFFFFFFFF || IMMEDIATE < 0){
+    if (IMMEDIATE > 0xFFFF || IMMEDIATE < 0){
 
         SYS_PRINT("Immediate value out of range!\n");
         return -1;
@@ -176,12 +176,13 @@ int compile(const string &INPUT_FILE_NAME){
         output_file.close();
         output_file.open(_COMPILER_OUTPUT_FILE_NAME, ios::trunc | ios::out);
     }
-    
+    SYS_PRINT("All the values are displayed in HEXadecimal!!\n");
     SYS_PRINT("Reading content of input file...\n");
     string         INSTRUCTION = "";
     string         ARGUMENTS   = "";
 
     REGS_INIT();
+    MEM_INIT();
     while(getline(input_file,fstr)){
         SYS_PRINT("Line #%d: ", line);
         //Comment
@@ -217,9 +218,9 @@ int compile(const string &INPUT_FILE_NAME){
             Register* ARG1_REG = LOAD_REG(ARGS[1]);
             Register* ARG2_REG = LOAD_REG(ARGS[2]);
 
-            if (*DES_REG  == ERROR_REG ||
-                *ARG1_REG == ERROR_REG ||
-                *ARG2_REG == ERROR_REG)
+            if (DES_REG  == nullptr ||
+                ARG1_REG == nullptr ||
+                ARG2_REG == nullptr)
                 EXIT_FAILED();
 
             ADD(*DES_REG, *ARG1_REG, *ARG2_REG);
@@ -233,9 +234,9 @@ int compile(const string &INPUT_FILE_NAME){
             Register* ARG1_REG = LOAD_REG(ARGS[1]);
             Register* ARG2_REG = LOAD_REG(ARGS[2]);
 
-            if (*DES_REG  == ERROR_REG ||
-                *ARG1_REG == ERROR_REG ||
-                *ARG2_REG == ERROR_REG)
+            if (DES_REG  == nullptr ||
+                ARG1_REG == nullptr ||
+                ARG2_REG == nullptr)
                 EXIT_FAILED();
 
             SUB(*DES_REG, *ARG1_REG, *ARG2_REG);
@@ -246,10 +247,10 @@ int compile(const string &INPUT_FILE_NAME){
             SYS_PRINT("Performing ori instruction: %s = %s + %s here\n", ARGS[0].c_str(), ARGS[1].c_str(), ARGS[2].c_str());
 
             Register* DES_REG  = LOAD_REG(ARGS[0]);
-            Register* ARG_REG = LOAD_REG(ARGS[1]);
+            Register* ARG_REG  = LOAD_REG(ARGS[1]);
 
-            if (*DES_REG  == ERROR_REG ||
-                *ARG_REG == ERROR_REG)
+            if (DES_REG == nullptr ||
+                ARG_REG == nullptr)
                 EXIT_FAILED();
 
             ORI(*DES_REG, *ARG_REG, stoll(ARGS[2]));
@@ -257,21 +258,36 @@ int compile(const string &INPUT_FILE_NAME){
         }
         else if(INSTRUCTION == "lw"){
             
+            Register* DES_REG = LOAD_REG(ARGS[0]);
+            Register* ARG_REG = LOAD_REG(ARGS[2]);
+
             unsigned int IMMEDIATE = stoll(ARGS[1]);
-            SYS_PRINT("Performing lw instruction: *%s = %d[%d] here\n", ARGS[0].c_str(), IMMEDIATE, ARGS[2].c_str());
+            SYS_PRINT("Performing lw instruction: *%s = %d[%d] here\n", ARGS[0].c_str(), ARGS[2].c_str(), IMMEDIATE);
             if (IMMEDIATE % 4 != 0) {
                 SYS_PRINT("Invalid offset for lw!\n");
                 EXIT_FAILED();
             }
 
+            if (LW(*DES_REG, *ARG_REG, IMMEDIATE) == -1) {
+                SYS_PRINT("Load word failed! Exiting...\n");
+                EXIT_FAILED();
+            }
         }
         else if(INSTRUCTION == "sw"){
 
+            Register* DES_REG = LOAD_REG(ARGS[0]);
+            Register* ARG_REG = LOAD_REG(ARGS[2]);
+            
             unsigned int IMMEDIATE = stoll(ARGS[1]);
-            SYS_PRINT("Performing sw instruction: %d[%d] = *%s here\n", stoll(ARGS[1]), ARGS[2].c_str(), ARGS[0].c_str());
+            SYS_PRINT("Performing sw instruction: %d[%d] = *%s here\n", ARGS[2].c_str(), IMMEDIATE, ARGS[0].c_str());
             if (IMMEDIATE % 4 != 0) {
                 SYS_PRINT("Invalid offset for lw!\n");
                 EXIT_FAILED();
+            }
+
+            if (SW(*DES_REG, *ARG_REG, IMMEDIATE)){
+                SYS_PRINT("Store word failed! Exiting...\n");
+                EXIT_FAILED();  
             }
         }
         else{
